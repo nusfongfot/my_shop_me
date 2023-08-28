@@ -31,7 +31,7 @@ export default function ProductDetails({ product, setProduct }: Props) {
   const { total } = useTotalStore();
 
   const handleAddToCart = () => {
-    const isExist = cartItems.some((product: any) => product.id == product.id);
+    const isExist = cartItems.some((item: any) => item.id == product?.id);
 
     if (isExist) return errorToast("This product is in you cart!", 1500);
     addToCartStore(product);
