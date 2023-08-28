@@ -10,7 +10,13 @@ export default function BestDeals() {
 
   const getProductsApi = async () => {
     const res = await getProducts(0, 6);
-    setProducts(res.products);
+    const newData = res.products.map((item: any) => {
+      return {
+        ...item,
+        qty: 1,
+      };
+    });
+    setProducts(newData);
   };
 
   useEffect(() => {

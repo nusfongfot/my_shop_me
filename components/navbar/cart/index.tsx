@@ -2,23 +2,35 @@ import { Box, Button, Divider, Paper, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { useRouter } from "next/router";
-import { useCartStore } from "@/zustand/product";
+import { useCartStore, useTotalStore } from "@/zustand/product";
 type Props = {
   handleCloseUserMenu: Function;
 };
 
 export default function CartComponent({ handleCloseUserMenu }: Props) {
   const router = useRouter();
-  const { cartItems } = useCartStore();
+  const { cartItems, setCartItems } = useCartStore();
+  const { total } = useTotalStore();
 
   const goToCart = () => {
     router.push("/cart");
     handleCloseUserMenu();
   };
-  console.log("cart", cartItems);
+
+  const goToCheckout = () => {
+    router.push("/checkout");
+    handleCloseUserMenu();
+  };
+
+  const handleDeleteItems = (item: any) => {
+    const itemId = item.id;
+    const filterItem = cartItems.filter((value) => value.id !== itemId);
+    setCartItems(filterItem);
+  };
+
   return (
     <Box width={330} p={1}>
-      <Typography variant="h6">Shopping Cart (02)</Typography>
+      <Typography variant="h6">{`Shopping Cart (${cartItems.length})`}</Typography>
       <Divider sx={{ mt: 1 }} />
 
       {cartItems.map((item) => (
@@ -39,9 +51,12 @@ export default function CartComponent({ handleCloseUserMenu }: Props) {
               <br /> {item.description.substring(0, 20) + "..."}
             </Typography>
 
-            <Typography>{`1 X ${item.price}`}</Typography>
+            <Typography>{`${item.qty} X ${item.price}`}</Typography>
           </Box>
-          <CloseIcon />
+          <CloseIcon
+            sx={{ cursor: "pointer" }}
+            onClick={() => handleDeleteItems(item)}
+          />
         </Stack>
       ))}
 
@@ -49,7 +64,7 @@ export default function CartComponent({ handleCloseUserMenu }: Props) {
 
       <Stack flexDirection={"row"} justifyContent={"space-between"}>
         <Typography>Total:</Typography>
-        <Typography>15,000</Typography>
+        <Typography>{total}</Typography>
       </Stack>
 
       <Button
@@ -57,7 +72,7 @@ export default function CartComponent({ handleCloseUserMenu }: Props) {
         className="btn_org"
         fullWidth
         sx={{ mt: 2 }}
-        onClick={goToCart}
+        onClick={goToCheckout}
       >
         Check out now
       </Button>

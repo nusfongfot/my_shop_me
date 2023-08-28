@@ -3,6 +3,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { useRouter } from "next/router";
 export default function CheckOutDone() {
   const router = useRouter();
+
   return (
     <Box>
       <Stack flexDirection={"column"} alignItems={"center"} mt={5}>

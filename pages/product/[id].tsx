@@ -15,7 +15,8 @@ export default function Page() {
   const getDetailsProduct = async () => {
     if (router.isReady) {
       const res = await getProduct(id);
-      setProduct(res);
+      const newData = { ...res, qty: 1 };
+      setProduct(newData);
     }
   };
 
@@ -24,7 +25,7 @@ export default function Page() {
   }, [router?.query?.id]);
   return (
     <div>
-      <ProductDetails product={product} />
+      <ProductDetails product={product} setProduct={setProduct} />
     </div>
   );
 }

@@ -20,8 +20,14 @@ export default function Shop() {
 
   const getProductsApi = async (page: number, total: number) => {
     const res = await getProducts(page, total);
+    const newData = res.products.map((item: any) => {
+      return {
+        ...item,
+        qty: 1,
+      };
+    });
     setCount(res.total);
-    setProducts(res.products);
+    setProducts(newData);
   };
 
   const getCateByAPI = async () => {

@@ -11,9 +11,12 @@ import DataGridDemo from "./table";
 import ActiveLastBreadcrumb from "../service-ui/breadcrumbs";
 import Header1 from "../header/header1";
 import { useRouter } from "next/router";
+import { useCartStore, useTotalStore } from "@/zustand/product";
 
 export default function Cart() {
   const router = useRouter();
+  const { total, setTotal } = useTotalStore();
+
   return (
     <Container maxWidth="xl">
       <Header1 />
@@ -31,7 +34,7 @@ export default function Cart() {
           <Box sx={{ border: "1px solid rgba(0,0,0,0.2)", p: 2 }}>
             <Stack flexDirection={"row"} justifyContent={"space-between"}>
               <Typography>Sub-total</Typography>
-              <Typography>$1200</Typography>
+              <Typography>${total}</Typography>
             </Stack>
 
             <Stack flexDirection={"row"} justifyContent={"space-between"}>
@@ -47,7 +50,7 @@ export default function Cart() {
 
             <Stack flexDirection={"row"} justifyContent={"space-between"}>
               <Typography>Total</Typography>
-              <Typography>$2400.99</Typography>
+              <Typography>${total}</Typography>
             </Stack>
 
             <Button

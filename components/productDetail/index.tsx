@@ -9,19 +9,44 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import ImageContent from "./swiper";
 import { Product } from "@/type/product";
 import LabTabs from "./tabs";
 import Header1 from "../header/header1";
 import ActiveLastBreadcrumb from "../service-ui/breadcrumbs";
+import { useCartStore, useTotalStore } from "@/zustand/product";
+import { errorToast, successToast } from "@/utils/notification";
 
 type Props = {
   product: Product | undefined;
+  setProduct: Dispatch<SetStateAction<Product | undefined>>;
 };
 
-export default function ProductDetails({ product }: Props) {
+export default function ProductDetails({ product, setProduct }: Props) {
   const [value, setValue] = useState<number | null>(2);
+  const { addToCartStore, cartItems } = useCartStore();
+  const [qty, setQty] = useState<number>(1);
+
+  const { total } = useTotalStore();
+
+  const handleAddToCart = () => {
+    const isExist = cartItems.some((product: any) => product.id == product.id);
+
+    if (isExist) return errorToast("This product is in you cart!", 1500);
+    addToCartStore(product);
+    successToast("Add product successfully", 1500);
+  };
+
+  const updateQty = (row: any, type: string) => {
+    if (type == "plus") {
+      setQty((prev) => prev + 1);
+      return (row.qty = qty + 1);
+    } else {
+      setQty((prev) => prev - 1);
+      return (row.qty = qty - 1);
+    }
+  };
 
   return (
     <Container maxWidth="xl" sx={{ p: 2 }}>
@@ -84,16 +109,29 @@ export default function ProductDetails({ product }: Props) {
               alignItems={"center"}
               sx={{ border: "1px solid #E4E7E9" }}
             >
-              <Button variant="text" sx={{ color: "black" }}>
+              <Button
+                variant="text"
+                sx={{ color: "black" }}
+                onClick={() => updateQty(product, "minus")}
+                disabled={qty == 1}
+              >
                 -
               </Button>
-              <Typography>1</Typography>
-              <Button variant="text" sx={{ color: "black" }}>
+              <Typography>{qty}</Typography>
+              <Button
+                variant="text"
+                sx={{ color: "black" }}
+                onClick={() => updateQty(product, "plus")}
+              >
                 +
               </Button>
             </Stack>
 
-            <Button className="btn_org" variant="contained">
+            <Button
+              className="btn_org"
+              variant="contained"
+              onClick={handleAddToCart}
+            >
               Add to Cart
             </Button>
 

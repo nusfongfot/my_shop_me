@@ -11,7 +11,7 @@ import {
 import { useState } from "react";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-
+import GoogleIcon from "@mui/icons-material/Google";
 export default function LoginComponent() {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -57,7 +57,18 @@ export default function LoginComponent() {
         <Typography>Don't have account ?</Typography>
       </Divider>
 
-      <Button variant="contained" className="btn_org" fullWidth sx={{ mt: 2 }}>
+      <Button
+        startIcon={
+          <img
+            src="https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png"
+            style={{ width: 30, height: 30 }}
+          />
+        }
+        variant="contained"
+        className="btn_org"
+        fullWidth
+        sx={{ mt: 2 }}
+      >
         Signin with google
       </Button>
 

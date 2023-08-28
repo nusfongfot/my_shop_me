@@ -16,14 +16,15 @@ import PersonIcon from "@mui/icons-material/Person";
 import LoginComponent from "./login";
 import CartComponent from "./cart";
 import { useRouter } from "next/router";
-import { useCartStore } from "@/zustand/product";
+import { useCartStore, useTotalStore } from "@/zustand/product";
 
 const pages = ["Products", "Pricing", "Blog"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function ResponsiveAppBar() {
   const router = useRouter();
-  const { cartItems } = useCartStore();
+  const { cartItems, setCartItems } = useCartStore();
+  const { setTotal, total } = useTotalStore();
 
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
@@ -68,7 +69,14 @@ function ResponsiveAppBar() {
       });
     }
   };
-  console.log("cartItems", typeof Number(cartItems.length));
+
+  React.useEffect(() => {
+    const valueTotal = cartItems
+      .reduce((acc, value) => acc + value.price * value.qty, 0)
+      .toFixed(2);
+    setTotal(valueTotal);
+  }, [cartItems]);
+
   return (
     <NoSsr>
       <AppBar position="static" sx={{ background: "#1B6392" }}>
@@ -223,7 +231,13 @@ function ResponsiveAppBar() {
           open={Boolean(anchorElUser)}
           onClose={handleCloseUserMenu}
         >
-          <CartComponent handleCloseUserMenu={handleCloseUserMenu} />
+          {cartItems.length == 0 ? (
+            <Box sx={{ p: 2 }}>
+              <Typography variant="h5">Your cart is Empty!</Typography>
+            </Box>
+          ) : (
+            <CartComponent handleCloseUserMenu={handleCloseUserMenu} />
+          )}
         </Menu>
 
         <Menu
@@ -243,6 +257,8 @@ function ResponsiveAppBar() {
           onClose={handleCloseLogin}
         >
           <LoginComponent />
+          {/* <MenuItem onClick={() => {}}>DashBoard</MenuItem>
+          <MenuItem onClick={() => {}}>Log out</MenuItem> */}
         </Menu>
       </AppBar>
     </NoSsr>
