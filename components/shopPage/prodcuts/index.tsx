@@ -55,7 +55,7 @@ export default function ProductsShop({ getProductsApi, setCount }: Props) {
           setSearch(e.target.value)
         }
       />
-      <ProductService onClick1={() => {}} data={products} />
+      <ProductService data={products} />
       {isShow && (
         <Stack flexDirection={"row"} justifyContent={"center"}>
           <Typography variant="h4" sx={{ mt: 10, mb: 10 }} align="center">
