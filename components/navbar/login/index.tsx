@@ -12,6 +12,8 @@ import { useState } from "react";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import GoogleIcon from "@mui/icons-material/Google";
+import { signIn, signOut } from "next-auth/react";
+
 export default function LoginComponent() {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -68,6 +70,7 @@ export default function LoginComponent() {
         className="btn_org"
         fullWidth
         sx={{ mt: 2 }}
+        onClick={() => signIn("google", { redirect: false, callbackUrl: "/" })}
       >
         Signin with google
       </Button>

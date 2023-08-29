@@ -17,11 +17,14 @@ import LoginComponent from "./login";
 import CartComponent from "./cart";
 import { useRouter } from "next/router";
 import { useCartStore, useTotalStore } from "@/zustand/product";
+import { useSession, signIn, signOut } from "next-auth/react";
 
 const pages = ["Products", "Pricing", "Blog"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function ResponsiveAppBar() {
+  const { data: session } = useSession();
+
   const router = useRouter();
   const { cartItems, setCartItems } = useCartStore();
   const { setTotal, total } = useTotalStore();
@@ -240,26 +243,57 @@ function ResponsiveAppBar() {
           )}
         </Menu>
 
-        <Menu
-          sx={{ mt: "45px" }}
-          id="menu-appbar"
-          anchorEl={openLogin}
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-          keepMounted
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-          open={Boolean(openLogin)}
-          onClose={handleCloseLogin}
-        >
-          <LoginComponent />
-          {/* <MenuItem onClick={() => {}}>DashBoard</MenuItem>
-          <MenuItem onClick={() => {}}>Log out</MenuItem> */}
-        </Menu>
+        {session?.user ? (
+          <Menu
+            sx={{ mt: "45px" }}
+            id="menu-appbar"
+            anchorEl={openLogin}
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            open={Boolean(openLogin)}
+            onClose={handleCloseLogin}
+          >
+            <MenuItem
+              onClick={() => {
+                handleCloseLogin();
+                router.push("/dashboard?subpath=dashboard");
+              }}
+            >
+              DashBoard
+            </MenuItem>
+            <MenuItem
+              onClick={() => signOut({ redirect: true, callbackUrl: "/" })}
+            >
+              Log out
+            </MenuItem>
+          </Menu>
+        ) : (
+          <Menu
+            sx={{ mt: "45px" }}
+            id="menu-appbar"
+            anchorEl={openLogin}
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            open={Boolean(openLogin)}
+            onClose={handleCloseLogin}
+          >
+            <LoginComponent />
+          </Menu>
+        )}
       </AppBar>
     </NoSsr>
   );

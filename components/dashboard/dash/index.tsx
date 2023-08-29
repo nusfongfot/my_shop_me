@@ -12,11 +12,14 @@ import RocketIcon from "@mui/icons-material/Rocket";
 import BookmarksIcon from "@mui/icons-material/Bookmarks";
 import MarkunreadMailboxIcon from "@mui/icons-material/MarkunreadMailbox";
 import CardPayment from "./cardPayment";
+import { useSession } from "next-auth/react";
 
 export default function Dash() {
+  const { data: session } = useSession();
+
   return (
     <Box mb={3}>
-      <Typography variant="h6">Hello Sorawit.</Typography>
+      <Typography variant="h6">Hello {session?.user?.name}.</Typography>
       <Typography>
         From your account dashboard. you can easily check & view your <br />
         <span style={{ color: "#2DA5F3" }}>Recent Orders,</span> manage your

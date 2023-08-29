@@ -23,33 +23,27 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import Dash from "./dash";
 import { useRouter } from "next/router";
-
-const list = [
-  {
-    link: "/dashboard?subpath=dashboard",
-    sub: "dashboard",
-    title: "Dashboard",
-    icon: <DashboardIcon />,
-  },
-
-  {
-    link: "/dashboard?subpath=setting",
-    sub: "setting",
-    title: "Setting",
-    icon: <SettingsIcon />,
-  },
-  {
-    link: "/",
-    sub: "",
-    title: "Log-out",
-    icon: <LogoutIcon />,
-  },
-];
+import SettingDashBoard from "./setting";
+import { signOut } from "next-auth/react";
 
 export default function DashBoard() {
   const router = useRouter();
 
-  console.log("router", router.query.subpath);
+  const list = [
+    {
+      link: "/dashboard?subpath=dashboard",
+      sub: "dashboard",
+      title: "Dashboard",
+      icon: <DashboardIcon />,
+    },
+
+    {
+      link: "/dashboard?subpath=setting",
+      sub: "setting",
+      title: "Setting",
+      icon: <SettingsIcon />,
+    },
+  ];
 
   return (
     <Container maxWidth="xl">
@@ -97,7 +91,7 @@ export default function DashBoard() {
         </Grid>
         <Grid item xs={12} lg={10}>
           {router.query.subpath == "dashboard" && <Dash />}
-          {/* <h1>Test Ohter</h1> */}
+          {router.query.subpath == "setting" && <SettingDashBoard />}
         </Grid>
       </Grid>
     </Container>

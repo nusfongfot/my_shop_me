@@ -17,6 +17,7 @@ import Header1 from "../header/header1";
 import ActiveLastBreadcrumb from "../service-ui/breadcrumbs";
 import { useCartStore, useTotalStore } from "@/zustand/product";
 import { errorToast, successToast } from "@/utils/notification";
+import { useRouter } from "next/router";
 
 type Props = {
   product: Product | undefined;
@@ -24,6 +25,7 @@ type Props = {
 };
 
 export default function ProductDetails({ product, setProduct }: Props) {
+  const router = useRouter();
   const [value, setValue] = useState<number | null>(2);
   const { addToCartStore, cartItems } = useCartStore();
   const [qty, setQty] = useState<number>(1);
@@ -36,6 +38,11 @@ export default function ProductDetails({ product, setProduct }: Props) {
     if (isExist) return errorToast("This product is in you cart!", 1500);
     addToCartStore(product);
     successToast("Add product successfully", 1500);
+  };
+
+  const handleBuynow = () => {
+    addToCartStore(product);
+    router.push('/checkout')
   };
 
   const updateQty = (row: any, type: string) => {
@@ -135,7 +142,7 @@ export default function ProductDetails({ product, setProduct }: Props) {
               Add to Cart
             </Button>
 
-            <Button variant="outlined" color="warning">
+            <Button variant="outlined" color="warning" onClick={handleBuynow}>
               buy now
             </Button>
           </Stack>

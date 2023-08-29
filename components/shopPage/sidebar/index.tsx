@@ -1,4 +1,4 @@
-import { getCateOfProduct } from "@/api/products";
+import { getCateOfProduct, getProducts } from "@/api/products";
 import { useCateStore } from "@/zustand/cate";
 import { useProductsStore } from "@/zustand/product";
 import {
@@ -34,9 +34,8 @@ export default function SideBar({
 }: Props) {
   const { cates } = useCateStore();
   const { setProducts, products } = useProductsStore();
-  const initialProducts: any[] = products;
 
-  const [value, setValue] = useState<number>(0);
+  const [value, setValue] = useState<number[]>([0, 2500]);
 
   const handleChangeRangePrice = (event: any, newValue: any) => {
     setValue(newValue);
@@ -49,16 +48,19 @@ export default function SideBar({
     setCount(res.total);
   };
 
-  const getProductsByPrice = () => {
-    const filterPrice: any = products.filter((item: any) => {
-      const findPrice = item.price;
-      if (value >= findPrice) {
-        return item;
-      }
-      return false;
+  const getProductsByPrice = async () => {
+    const res = await getProducts(1, 100);
+    const data = res.products;
+
+    const filteredProducts = data.filter((product: any) => {
+      const productPrice = product.price;
+      return productPrice >= value[0] && productPrice <= value[1];
     });
-    setProducts(filterPrice);
-    setCount(products.length);
+
+    console.log("res", res);
+
+    setProducts(filteredProducts);
+    setCount(0);
   };
 
   useEffect(() => {
@@ -88,18 +90,14 @@ export default function SideBar({
             setType(e.target.value)
           }
         >
-          {cates.length == 0 ? (
-            <h5>Loding...</h5>
-          ) : (
-            cates.map((item) => (
-              <FormControlLabel
-                key={item}
-                value={item}
-                control={<Radio color="warning" />}
-                label={item}
-              />
-            ))
-          )}
+          {cates.map((item) => (
+            <FormControlLabel
+              key={item}
+              value={item}
+              control={<Radio color="warning" />}
+              label={item}
+            />
+          ))}
         </RadioGroup>
       </FormControl>
 
