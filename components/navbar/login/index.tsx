@@ -70,7 +70,7 @@ export default function LoginComponent() {
         className="btn_org"
         fullWidth
         sx={{ mt: 2 }}
-        onClick={() => signIn("google", { redirect: false, callbackUrl: "/" })}
+        onClick={() => signIn("google")}
       >
         Signin with google
       </Button>
