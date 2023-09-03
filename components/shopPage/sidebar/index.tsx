@@ -57,8 +57,6 @@ export default function SideBar({
       return productPrice >= value[0] && productPrice <= value[1];
     });
 
-    console.log("res", res);
-
     setProducts(filteredProducts);
     setCount(0);
   };

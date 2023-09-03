@@ -1,4 +1,4 @@
-import { getCate, getProducts } from "@/api/products";
+import { getCate, getProducts, searchProducts } from "@/api/products";
 import Header1 from "../header/header1";
 import { useEffect, useState } from "react";
 import { Box, Container, Grid, Stack } from "@mui/material";
@@ -9,8 +9,12 @@ import { useProductsStore } from "@/zustand/product";
 import ProductsShop from "./prodcuts";
 import PaginationService from "../service-ui/padination";
 import ActiveLastBreadcrumb from "../service-ui/breadcrumbs";
+import { useRouter } from "next/router";
 
 export default function Shop() {
+  const router = useRouter();
+  const valueSearch = router.query.q;
+
   const { setCates, cates } = useCateStore();
   const { setProducts, products } = useProductsStore();
   const [type, setType] = useState<string>("");
@@ -19,6 +23,7 @@ export default function Shop() {
   const [count, setCount] = useState<number>(0);
 
   const getProductsApi = async (page: number, total: number) => {
+    if (valueSearch) return;  
     const res = await getProducts(page, total);
     const newData = res.products.map((item: any) => {
       return {
@@ -39,6 +44,14 @@ export default function Shop() {
     setPage(newPage);
   };
 
+  const getProductsBySearchBar = async () => {
+    if (valueSearch) {
+      const { products, total } = await searchProducts(valueSearch as string);
+      setProducts(products);
+      setCount(total);
+    }
+  };
+
   useEffect(() => {
     getCateByAPI();
   }, []);
@@ -46,6 +59,10 @@ export default function Shop() {
   useEffect(() => {
     getProductsApi(page, 6);
   }, [page]);
+
+  useEffect(() => {
+    getProductsBySearchBar();
+  }, [valueSearch]);
 
   return (
     <Container maxWidth="xl">

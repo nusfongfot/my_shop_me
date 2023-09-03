@@ -25,7 +25,6 @@ export default function LoginComponent() {
     event.preventDefault();
   };
 
-  console.log("process.env.NEXTAUTH_URL", process.env.NEXT_PUBLIC_NEXTAUTH_URL);
 
   return (
     <Box width={330} p={1}>

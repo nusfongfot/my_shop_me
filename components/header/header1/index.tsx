@@ -20,7 +20,6 @@ import { useRouter } from "next/router";
 export default function Header1() {
   const { cates } = useCateStore();
   const router = useRouter();
-  console.log("rr", router.asPath);
 
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 

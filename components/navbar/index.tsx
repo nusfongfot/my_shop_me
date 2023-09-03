@@ -18,6 +18,7 @@ import CartComponent from "./cart";
 import { useRouter } from "next/router";
 import { useCartStore, useTotalStore } from "@/zustand/product";
 import { useSession, signIn, signOut } from "next-auth/react";
+import { searchProducts } from "@/api/products";
 
 const pages = ["Products", "Pricing", "Blog"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
@@ -62,13 +63,13 @@ function ResponsiveAppBar() {
     setOpenLogin(null);
   };
 
-  const handleSubmitSearch = (e: React.FormEvent<HTMLInputElement>) => {
+  const handleSubmitSearch = async (e: React.FormEvent<HTMLInputElement>) => {
     e.preventDefault();
 
     if (search) {
       router.push({
         pathname: "/shop",
-        query: search,
+        query: `q=${search}`,
       });
     }
   };

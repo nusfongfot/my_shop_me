@@ -22,7 +22,6 @@ export default function MySwiper() {
         img: "",
       };
     });
-    console.log("data", data);
     // setCate(data);
   };
 
