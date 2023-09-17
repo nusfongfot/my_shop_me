@@ -12,16 +12,14 @@ export default function Page() {
 
   const [product, setProduct] = useState<Product>();
 
-  const getDetailsProduct = async () => {
-    if (router.isReady) {
-      const res = await getProduct(id);
-      const newData = { ...res, qty: 1 };
-      setProduct(newData);
-    }
-  };
-
   useEffect(() => {
-    getDetailsProduct();
+    (async () => {
+      if (router.isReady) {
+        const res = await getProduct(id);
+        const newData = { ...res, qty: 1 };
+        setProduct(newData);
+      }
+    })();
   }, [router?.query?.id]);
   return (
     <div>
