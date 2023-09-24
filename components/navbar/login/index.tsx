@@ -73,7 +73,7 @@ export default function LoginComponent() {
         sx={{ mt: 2 }}
         onClick={() =>
           signIn("google", {
-            redirect: false,
+            redirect: true,
             callbackUrl: process.env.NEXT_PUBLIC_NEXTAUTH_URL,
           })
         }
