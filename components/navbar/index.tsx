@@ -19,12 +19,15 @@ import { useRouter } from "next/router";
 import { useCartStore, useTotalStore } from "@/zustand/product";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { searchProducts } from "@/api/products";
+import useAuth from "@/zustand/auth";
+import { deleteCookie } from "cookies-next";
 
 const pages = ["Products", "Pricing", "Blog"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function ResponsiveAppBar() {
   const { data: session } = useSession();
+  const { auth } = useAuth();
 
   const router = useRouter();
   const { cartItems, setCartItems } = useCartStore();
@@ -74,6 +77,11 @@ function ResponsiveAppBar() {
     }
   };
 
+  const handleLogOut = () => {
+    deleteCookie("token");
+    deleteCookie("accInfo");
+    window.location.reload();
+  };
   React.useEffect(() => {
     const valueTotal = cartItems
       .reduce((acc, value) => acc + value.price * value.qty, 0)
@@ -244,7 +252,7 @@ function ResponsiveAppBar() {
           )}
         </Menu>
 
-        {session?.user ? (
+        {auth?.cus_id ? (
           <Menu
             sx={{ mt: "45px" }}
             id="menu-appbar"
@@ -270,7 +278,8 @@ function ResponsiveAppBar() {
               DashBoard
             </MenuItem>
             <MenuItem
-              onClick={() => signOut({ redirect: true, callbackUrl: "/" })}
+              // onClick={() => signOut({ redirect: true, callbackUrl: "/" })}
+              onClick={handleLogOut}
             >
               Log out
             </MenuItem>
@@ -292,7 +301,7 @@ function ResponsiveAppBar() {
             open={Boolean(openLogin)}
             onClose={handleCloseLogin}
           >
-            <LoginComponent />
+            <LoginComponent setOpenLogin={setOpenLogin} />
           </Menu>
         )}
       </AppBar>
