@@ -46,7 +46,7 @@ function padWithZeros(number:any, length:any) {
 
 export const getCountdown = () => {
   //   let today = new Date().getTime()
-  let targetDay:any = new Date(2023, 9, 8, 25);
+  let targetDay:any = new Date(2023, 12, 31, 1);
   let today = new Date().getTime();
   let timeCount = targetDay - today; //convert milliseconds to seconds
   let sec = 1000;
@@ -54,6 +54,10 @@ export const getCountdown = () => {
   let hour = min * 60;
   let day = hour * 24;
   // 1 day = 24 hours = 24 * 60 mins = 24 * 60 * 60 sec
+
+  if (timeCount <= 0) {
+    return [0, 0, 0, 0];
+  }
 
   let days = Math.floor(timeCount / day); //convert seconds to days
   let hours = Math.floor((timeCount % day) / hour); //convert seconds to hours

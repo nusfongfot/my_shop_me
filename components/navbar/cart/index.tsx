@@ -1,14 +1,16 @@
 import { Box, Button, Divider, Paper, Stack, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { useRouter } from "next/router";
 import { useCartStore, useTotalStore } from "@/zustand/product";
+import useAuth from "@/zustand/auth";
 type Props = {
   handleCloseUserMenu: Function;
 };
 
 export default function CartComponent({ handleCloseUserMenu }: Props) {
   const router = useRouter();
+  const { auth } = useAuth();
   const { cartItems, setCartItems } = useCartStore();
   const { total } = useTotalStore();
 
@@ -23,10 +25,16 @@ export default function CartComponent({ handleCloseUserMenu }: Props) {
   };
 
   const handleDeleteItems = (item: any) => {
-    const itemId = item.id;
-    const filterItem = cartItems.filter((value) => value.id !== itemId);
+    const itemId = item.pro_id;
+    const filterItem = cartItems.filter((value) => value.pro_id !== itemId);
     setCartItems(filterItem);
   };
+
+  useEffect(() => {
+    if (!auth.cus_id) {
+      localStorage.removeItem("cart-store");
+    }
+  }, [auth.cus_id]);
 
   return (
     <Box width={330} p={1}>
@@ -39,10 +47,13 @@ export default function CartComponent({ handleCloseUserMenu }: Props) {
           mt={2}
           gap={1}
           justifyContent={"space-between"}
-          key={item.id}
+          key={item.pro_id}
         >
           <Box sx={{ border: "1px solid grey", height: 50 }}>
-            <img src={item.thumbnail} style={{ width: 50, height: 40 }} />
+            <img
+              src={item.image.split(",")[0]}
+              style={{ width: 50, height: 40 }}
+            />
           </Box>
 
           <Box>

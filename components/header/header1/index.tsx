@@ -16,9 +16,11 @@ import { data } from "../data";
 import PhoneIcon from "@mui/icons-material/Phone";
 import { useCateStore } from "@/zustand/cate";
 import { useRouter } from "next/router";
+import useAuth from "@/zustand/auth";
+import { getCate } from "@/api/products";
 
 export default function Header1() {
-  const { cates } = useCateStore();
+  const { cates, setCates } = useCateStore();
   const router = useRouter();
 
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -30,6 +32,17 @@ export default function Header1() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const { auth } = useAuth();
+  const getCateByAPI = async () => {
+    const res = await getCate();
+    setCates(res);
+  };
+  useEffect(() => {
+    if (!!cates) {
+      getCateByAPI();
+    }
+  }, [auth.cus_id]);
 
   return (
     <Box mt={2} mb={2}>
@@ -105,7 +118,7 @@ export default function Header1() {
         open={Boolean(anchorElUser)}
         onClose={handleCloseUserMenu}
       >
-        {cates.map((setting, i) => (
+        {cates?.categories?.map((setting:any, i:any) => (
           <MenuItem key={i} onClick={handleCloseUserMenu}>
             <Typography textAlign="center">{setting}</Typography>
           </MenuItem>

@@ -11,13 +11,36 @@ import Header1 from "../header/header1";
 import ActiveLastBreadcrumb from "../service-ui/breadcrumbs";
 import InfoIcon from "@mui/icons-material/Info";
 import { useRouter } from "next/router";
+import { useState } from "react";
+import { errorToast, successToast } from "@/utils/notification";
+import { getOrderIbByAPI } from "@/api/order";
+import BackDropLoading from "../backDrop";
 
 export default function TrackOrder() {
   const router = useRouter();
+  const [values, setValues] = useState("");
+  const [isLoding, setIsLoading] = useState(false);
+
+  const handleCheckTrack = async () => {
+    try {
+      setIsLoading(true);
+      const res = await getOrderIbByAPI(values);
+      if (res.res_code === "0000") {
+        successToast(res.message, 2000);
+        router.push(`/track?subpath=detail&orderId=${values}`);
+      } else {
+        errorToast("Order not found", 2500);
+      }
+    } catch (error: any) {
+      errorToast(error.response.data.message, 2500);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <Container maxWidth="xl">
+      {isLoding && <BackDropLoading loading={isLoding} />}
       <Header1 />
-
       <Box sx={{ background: "#F2F4F5", p: 2, mb: 2 }}>
         <ActiveLastBreadcrumb title={"Track Order"} />
       </Box>
@@ -38,11 +61,17 @@ export default function TrackOrder() {
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
               <Typography>Order ID</Typography>
-              <TextField size="small" fullWidth />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography>Billing EMail</Typography>
-              <TextField size="small" fullWidth />
+              <TextField
+                size="small"
+                fullWidth
+                value={values}
+                onChange={(e) => setValues(e.target.value)}
+                onKeyPress={(event) => {
+                  if (!/[0-9]/.test(event.key)) {
+                    event.preventDefault();
+                  }
+                }}
+              />
             </Grid>
           </Grid>
         </Grid>
@@ -59,7 +88,7 @@ export default function TrackOrder() {
         className="btn_org"
         variant="contained"
         sx={{ mt: 2, mb: 2 }}
-        onClick={() => router.push("/track?subpath=detail")}
+        onClick={() => handleCheckTrack()}
       >
         track order
       </Button>

@@ -1,3 +1,5 @@
+import { useAddUserSelected } from "@/zustand/address";
+import useAuth from "@/zustand/auth";
 import {
   Box,
   Button,
@@ -6,26 +8,86 @@ import {
   FormControl,
   FormControlLabel,
   Grid,
+  Paper,
   Radio,
   RadioGroup,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
+import { useRouter } from "next/router";
 import { useState } from "react";
 export default function InFormation() {
   const [selectedValue, setSelectedValue] = useState("a");
-
+  const { auth } = useAuth();
+  const { addUser, setAddUser } = useAddUserSelected();
+  const router = useRouter();
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedValue(event.target.value);
   };
+  console.log(addUser)
   return (
     <Box>
       <Typography variant="h5" mb={3}>
         Billing Information
       </Typography>
 
-      <Grid container spacing={3}>
+      {addUser.length === 0 ? (
+        <Stack flexDirection={"row"}>
+          <Typography variant="h4">
+            Go to Dashboard to select your address
+          </Typography>
+          <Button
+            sx={{ ml: 3, width: 100 }}
+            size="small"
+            className="btn_org"
+            variant="contained"
+            onClick={() => router.push("/dashboard?subpath=address")}
+          >
+            here
+          </Button>
+        </Stack>
+      ) : (
+        <Grid item xs={12} md={12}>
+          {addUser?.map((item: any, i) => (
+            <Paper
+              sx={{
+                p: 2,
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+              }}
+              key={i}
+            >
+              <Typography>Billing Address</Typography>
+              <Divider sx={{ mt: 1, mb: 1 }} />
+
+              <Typography>
+                {auth?.surname && auth?.surname !== ""
+                  ? `${auth?.name} ${auth?.surname}`
+                  : "Edit account for add fullname"}
+              </Typography>
+
+              <Stack flexDirection={"row"}>
+                <Typography sx={{ color: "grey" }}>
+                  {`House no ${item.home_no} ${item.road} ${item.tambon} ${item.amphoe} ${item.province} ${item.zipcode}`}
+                </Typography>
+              </Stack>
+              <Stack flexDirection={"row"}>
+                <Typography>Detail:</Typography>
+                <Typography sx={{ color: "grey" }}>{item.detail}</Typography>
+              </Stack>
+              <Stack flexDirection={"row"}>
+                <Typography>Phone:</Typography>
+                <Typography sx={{ color: "grey" }}>{auth?.phone}</Typography>
+              </Stack>
+            </Paper>
+          ))}
+        </Grid>
+      )}
+
+      {/* <Grid container spacing={3}>
         <Grid item xs={12} sm={4} lg={4}>
           <Typography>FirstName</Typography>
           <TextField size="small" fullWidth />
@@ -69,7 +131,7 @@ export default function InFormation() {
           <Typography>Phone Number</Typography>
           <TextField size="small" fullWidth />
         </Grid>
-      </Grid>
+      </Grid> */}
 
       <Box sx={{ border: "1px solid rgba(0,0,0,0.2)", p: 2, mt: 2 }}>
         <Typography>Payment Options</Typography>

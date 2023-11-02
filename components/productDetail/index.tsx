@@ -18,6 +18,7 @@ import ActiveLastBreadcrumb from "../service-ui/breadcrumbs";
 import { useCartStore, useTotalStore } from "@/zustand/product";
 import { errorToast, successToast } from "@/utils/notification";
 import { useRouter } from "next/router";
+import useAuth from "@/zustand/auth";
 
 type Props = {
   product: Product | undefined;
@@ -26,6 +27,7 @@ type Props = {
 
 export default function ProductDetails({ product, setProduct }: Props) {
   const router = useRouter();
+  const { auth } = useAuth();
   const [value, setValue] = useState<number | null>(2);
   const { addToCartStore, cartItems } = useCartStore();
   const [qty, setQty] = useState<number>(1);
@@ -33,7 +35,9 @@ export default function ProductDetails({ product, setProduct }: Props) {
   const { total } = useTotalStore();
 
   const handleAddToCart = () => {
-    const isExist = cartItems.some((item: any) => item.id == product?.id);
+    const isExist = cartItems.some(
+      (item: any) => item.pro_id == product?.pro_id
+    );
 
     if (isExist) return errorToast("This product is in you cart!", 1500);
     addToCartStore(product);
@@ -42,7 +46,7 @@ export default function ProductDetails({ product, setProduct }: Props) {
 
   const handleBuynow = () => {
     addToCartStore(product);
-    router.push('/checkout')
+    router.push("/checkout");
   };
 
   const updateQty = (row: any, type: string) => {
@@ -133,18 +137,33 @@ export default function ProductDetails({ product, setProduct }: Props) {
                 +
               </Button>
             </Stack>
+            {auth.cus_id ? (
+              <>
+                <Button
+                  className="btn_org"
+                  variant="contained"
+                  onClick={handleAddToCart}
+                >
+                  Add to Cart
+                </Button>
 
-            <Button
-              className="btn_org"
-              variant="contained"
-              onClick={handleAddToCart}
-            >
-              Add to Cart
-            </Button>
-
-            <Button variant="outlined" color="warning" onClick={handleBuynow}>
-              buy now
-            </Button>
+                <Button
+                  variant="outlined"
+                  color="warning"
+                  onClick={handleBuynow}
+                >
+                  buy now
+                </Button>
+              </>
+            ) : (
+              <Button
+                variant="contained"
+                sx={{ width: 250 }}
+                className="btn_org"
+              >
+                login to buy
+              </Button>
+            )}
           </Stack>
           <Box sx={{ border: "1px solid rgba(0,0,0,0.1)", p: 1, mt: 2 }}>
             <Typography>100% Guarantee Safe Checkout</Typography>

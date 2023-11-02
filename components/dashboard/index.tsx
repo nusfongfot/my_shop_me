@@ -25,7 +25,10 @@ import Dash from "./dash";
 import { useRouter } from "next/router";
 import SettingDashBoard from "./setting";
 import { signOut } from "next-auth/react";
-
+import AddressDashBoard from "./address";
+import HomeIcon from "@mui/icons-material/Home";
+import ProductionQuantityLimitsIcon from "@mui/icons-material/ProductionQuantityLimits";
+import OrderDashBoard from "./orders";
 export default function DashBoard() {
   const router = useRouter();
 
@@ -36,7 +39,18 @@ export default function DashBoard() {
       title: "Dashboard",
       icon: <DashboardIcon />,
     },
-
+    {
+      link: "/dashboard?subpath=address",
+      sub: "address",
+      title: "Address",
+      icon: <HomeIcon />,
+    },
+    {
+      link: "/dashboard?subpath=orders",
+      sub: "orders",
+      title: "Order",
+      icon: <ProductionQuantityLimitsIcon />,
+    },
     {
       link: "/dashboard?subpath=setting",
       sub: "setting",
@@ -92,6 +106,8 @@ export default function DashBoard() {
         <Grid item xs={12} lg={10}>
           {router.query.subpath == "dashboard" && <Dash />}
           {router.query.subpath == "setting" && <SettingDashBoard />}
+          {router.query.subpath == "address" && <AddressDashBoard />}
+          {router.query.subpath == "orders" && <OrderDashBoard />}
         </Grid>
       </Grid>
     </Container>

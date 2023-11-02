@@ -94,8 +94,11 @@ export default function Footer() {
             <Typography fontWeight={900}>Popular Tag</Typography>
 
             <Stack flexDirection={"row"} flexWrap={"wrap"} gap={2}>
-              {popular.map((item,i) => (
-                <Box key={i} sx={{ border: "1px solid rgba(255,255,255,0.7)", p: 0.5 }}>
+              {popular.map((item, i) => (
+                <Box
+                  key={i}
+                  sx={{ border: "1px solid rgba(255,255,255,0.7)", p: 0.5 }}
+                >
                   {item}
                 </Box>
               ))}

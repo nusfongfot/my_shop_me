@@ -9,6 +9,7 @@ const useAuth = create((set: any) => ({
     email: "",
     username: "",
     photo_user: "",
+    password: "",
   },
   accInfo: {},
   setAuth: (value: object) =>

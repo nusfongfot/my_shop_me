@@ -9,17 +9,31 @@ import { SessionProvider } from "next-auth/react";
 import useAuth from "@/zustand/auth";
 import { getCookie } from "cookies-next";
 import { useEffect, useState } from "react";
+import { getProfileByIDAPI } from "@/api/profile";
+import { errorToast } from "@/utils/notification";
+
 export default function App({
   Component,
   pageProps: { session, ...pageProps },
 }: AppProps) {
-  const { setAuth } = useAuth();
+  const { setAuth, auth } = useAuth();
   const getAccInfo: any = getCookie("accInfo");
 
   useEffect(() => {
-    if (typeof window !== "undefined" && getAccInfo) {
-      setAuth(JSON.parse(getAccInfo));
-    }
+    (async () => {
+      if (typeof window !== "undefined" && getAccInfo && !!auth) {
+        try {
+          const id = parseInt(getAccInfo);
+          const res = await getProfileByIDAPI(id);
+          if (res.res_code === "0000") {
+            setAuth(res.results[0]);
+          }
+        } catch (error: any) {
+          console.log("err", error);
+          errorToast(error.message, 2500);
+        }
+      }
+    })();
   }, []);
   return (
     <SessionProvider session={session}>

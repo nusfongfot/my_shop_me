@@ -13,7 +13,7 @@ export default function DataGridDemo() {
     const rowItem = row.row;
     setRows((prevCarts) => {
       return prevCarts.map((product) => {
-        if (product.id === rowItem.id) {
+        if (product.pro_id === rowItem.pro_id) {
           return {
             ...product,
             qty: type == "plus" ? product.qty + 1 : product.qty - 1,
@@ -25,20 +25,23 @@ export default function DataGridDemo() {
   };
 
   const handleDeleteItem = (row: any) => {
-    const filter = rows.filter((value) => value.id !== row.id);
+    const filter = rows.filter((value) => value.pro_id !== row.pro_id);
     setRows(filter);
   };
 
   const columns: GridColDef[] = [
     {
-      field: "images",
+      field: "image",
       headerName: "Products",
       // flex: 1,
       width: 250,
       editable: false,
       renderCell: (params) => (
         <>
-          <img style={{ width: 50, height: 50 }} src={params.value[0]} />
+          <img
+            style={{ width: 50, height: 50 }}
+            src={params.value.split(",")[0]}
+          />
         </>
       ),
     },
@@ -118,6 +121,7 @@ export default function DataGridDemo() {
         columns={columns}
         disableRowSelectionOnClick
         hideFooterPagination
+        getRowId={(row) => row.pro_id}
       />
     </Box>
   );

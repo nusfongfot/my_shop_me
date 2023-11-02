@@ -24,7 +24,7 @@ export default function CheckOutDone() {
           <Button
             variant="contained"
             className="btn_org"
-            onClick={() => router.push("/dashboard?subpath=dashboard")}
+            onClick={() => router.push("/dashboard?subpath=orders")}
           >
             View Order
           </Button>

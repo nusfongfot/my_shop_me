@@ -1,5 +1,6 @@
 import {
   Avatar,
+  Box,
   Button,
   Grid,
   IconButton,
@@ -8,14 +9,27 @@ import {
   OutlinedInput,
   Paper,
   Select,
+  Stack,
   TextField,
   Typography,
+  styled,
 } from "@mui/material";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import useAuth from "@/zustand/auth";
+import { uploadSingleImage } from "@/api/uploadImg";
+import { errorToast, successToast } from "@/utils/notification";
+import BackDropLoading from "@/components/backDrop";
+import { editProfileAPI } from "@/api/profile";
 
 export default function SettingDashBoard() {
+  const ref: any = useRef(null);
+  const [file, setFile] = useState(null);
+  const { auth, setAuth } = useAuth();
+
+  const [isLoding, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -25,11 +39,103 @@ export default function SettingDashBoard() {
   ) => {
     event.preventDefault();
   };
+
+  const handleClickUpload = () => {
+    ref.current.click();
+  };
+
+  const processFile = (e: any) => {
+    const selectedFile = e.target.files[0];
+    if (e.target.files && e.target.files[0]) {
+      setFile(selectedFile);
+      if (selectedFile.size > 1000000) {
+        alert("รูปภาพมีขนาดเกิน 1MB. กรุณาเลือกภาพใหม่!!!");
+        setFile(null);
+      }
+    } else {
+      setFile(null);
+    }
+  };
+
+  const handleUploadImage = async () => {
+    setIsLoading(true);
+    const formData: any = new FormData();
+    formData.append("file", file);
+    try {
+      const res = await editProfileAPI(auth.cus_id, formData);
+      console.log("res", res);
+      if (res.res_code === "0000") {
+        successToast(res.message, 2000);
+        setAuth(res.results[0]);
+      }
+    } catch (error: any) {
+      errorToast(error, 2500);
+    } finally {
+      setIsLoading(false);
+      setFile(null);
+    }
+  };
+
   return (
     <Paper sx={{ p: 2 }}>
+      {isLoding && <BackDropLoading loading={isLoding} />}
       <Grid container spacing={3}>
         <Grid item xs={12} md={3}>
-          <Avatar sx={{ height: 150, width: 150 }} />
+          {!file && (
+            <Avatar
+              sx={{ height: 150, width: 150 }}
+              src={auth.photo_user || ""}
+            />
+          )}
+
+          <TextField
+            type="file"
+            onChange={(e) => processFile(e)}
+            inputProps={{
+              accept: "image/jpeg, image/png",
+              ref: ref,
+            }}
+            sx={{ display: "none" }}
+          />
+
+          {file ? (
+            <Box>
+              <Avatar
+                sx={{ height: 150, width: 150 }}
+                src={URL.createObjectURL(file)}
+              />
+              <Stack flexDirection={"row"} gap={2}>
+                <Button
+                  variant="contained"
+                  size="small"
+                  sx={{ mt: 1 }}
+                  color="error"
+                  onClick={() => setFile(null)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="contained"
+                  size="small"
+                  sx={{ mt: 1 }}
+                  onClick={handleUploadImage}
+                >
+                  Confirm
+                </Button>
+              </Stack>
+            </Box>
+          ) : (
+            <Button
+              component="label"
+              variant="contained"
+              startIcon={<CloudUploadIcon />}
+              onClick={handleClickUpload}
+              size="small"
+              sx={{ mt: 2, ml: 1 }}
+            >
+              Upload file
+            </Button>
+          )}
         </Grid>
         <Grid item xs={12} md={9}>
           <Grid container spacing={3}>

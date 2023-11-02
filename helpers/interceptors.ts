@@ -7,6 +7,7 @@ const apiFetch = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASEURL,
 });
 
+// Before Send Request
 apiFetch.interceptors.request.use(
   (request) => {
     const { token } = getCookies("token" as any) || "";
@@ -17,16 +18,27 @@ apiFetch.interceptors.request.use(
     request.headers["Content-Type"] = "application/x-www-form-urlencoded";
     request.headers["x-access-login-application"] = "WEB";
     request.headers.Authorization = `Bearer ${token}`;
-    // request.headers.Authorization = `Basic ${Base64.encode(
-    //   process.env.NEXT_PUBLIC_BASICUSER +
-    //     ":" +
-    //     process.env.NEXT_PUBLIC_BASICPASS
-    // )}`;
 
     return request;
   },
   (error) => {
+    console.log("errir inside", error);
     return Promise.reject(error);
+  }
+);
+
+// Before Accept Response
+apiFetch.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (err) => {
+    if (err?.response?.data?.res_code === "5438") {
+      deleteCookie("token");
+      deleteCookie("accInfo");
+      return window.location.replace("/");
+    }
+    return Promise.reject(err);
   }
 );
 export default apiFetch;

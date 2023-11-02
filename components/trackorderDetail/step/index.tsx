@@ -17,6 +17,10 @@ import StepConnector, {
 } from "@mui/material/StepConnector";
 import { StepIconProps } from "@mui/material/StepIcon";
 
+type Props = {
+  order: any[];
+};
+
 const QontoStepIconRoot = styled("div")<{ ownerState: { active?: boolean } }>(
   ({ theme, ownerState }) => ({
     color: theme.palette.mode === "dark" ? theme.palette.grey[700] : "#eaeaf0",
@@ -109,14 +113,33 @@ function ColorlibStepIcon(props: StepIconProps) {
   );
 }
 
-const steps = ["Order Placed", "Packaging", "On The Road", "Delivered"];
+const steps = [
+  "Already ordered",
+  "Waiting for transport to pick up",
+  "In the process of being shipped",
+  "Successful delivery",
+];
 
-export default function StepperTransSport() {
+export default function StepperTransSport({ order }: Props) {
+  const [activeStep, setActiveStep] = React.useState(0);
+  const findStep = order?.map((item) => item.status_order);
+
+  React.useEffect(() => {
+    if (findStep) {
+      for (let i = 0; i < steps.length; i++) {
+        if (steps[i].toString() === findStep.toString()) {
+          setActiveStep(i);
+          break;
+        }
+      }
+    }
+  }, [findStep]);
+
   return (
     <Stack sx={{ width: "100%" }} spacing={4}>
       <Stepper
         alternativeLabel
-        activeStep={1}
+        activeStep={activeStep}
         connector={<ColorlibConnector />}
       >
         {steps.map((label) => (

@@ -1,4 +1,9 @@
-import { getCateOfProduct, getProducts } from "@/api/products";
+import {
+  getCateOfProduct,
+  getPriceRangeAPI,
+  getProducts,
+} from "@/api/products";
+import BackDropLoading from "@/components/backDrop";
 import { useCateStore } from "@/zustand/cate";
 import { useProductsStore } from "@/zustand/product";
 import {
@@ -16,6 +21,7 @@ import {
   Dispatch,
   SetStateAction,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 
@@ -34,8 +40,9 @@ export default function SideBar({
 }: Props) {
   const { cates } = useCateStore();
   const { setProducts, products } = useProductsStore();
+  const [isLoding, setIsLoading] = useState(false);
 
-  const [value, setValue] = useState<number[]>([0, 2500]);
+  const [value, setValue] = useState<number[]>([0, 0]);
 
   const handleChangeRangePrice = (event: any, newValue: any) => {
     setValue(newValue);
@@ -43,22 +50,34 @@ export default function SideBar({
 
   const getProductCateApi = async () => {
     if (!type) return;
-    const res = await getCateOfProduct(type);
-    setProducts(res.products);
-    setCount(res.total);
+    try {
+      setIsLoading(true);
+      const res = await getCateOfProduct(type);
+      if (res?.res_code === "0000") {
+        setProducts(res.products);
+        setCount(res.total);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const getProductsByPrice = async () => {
-    const res = await getProducts(1, 100);
-    const data = res.products;
-
-    const filteredProducts = data.filter((product: any) => {
-      const productPrice = product.price;
-      return productPrice >= value[0] && productPrice <= value[1];
-    });
-
-    setProducts(filteredProducts);
-    setCount(0);
+    try {
+      setIsLoading(true);
+      const res = await getPriceRangeAPI(value[0], value[1]);
+      if (res.res_code === "0000") {
+        setProducts(res.products);
+      } else {
+        setProducts(res.products);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -66,11 +85,13 @@ export default function SideBar({
   }, [type]);
 
   useEffect(() => {
-    getProductsByPrice();
+    if (value[1] !== 0) {
+      getProductsByPrice();
+    }
   }, [value]);
-
   return (
     <Box p={2}>
+      {isLoding && <BackDropLoading loading={isLoding} />}
       <Typography variant="h5">Category</Typography>
       <FormControl sx={{ color: "#FA8232" }}>
         <RadioGroup
@@ -88,7 +109,7 @@ export default function SideBar({
             setType(e.target.value)
           }
         >
-          {cates.map((item) => (
+          {cates?.categories?.map((item: any) => (
             <FormControlLabel
               key={item}
               value={item}
@@ -109,7 +130,7 @@ export default function SideBar({
         valueLabelDisplay="auto"
         sx={{ color: "#FA8232" }}
         min={0}
-        max={2500}
+        max={3500}
       />
     </Box>
   );

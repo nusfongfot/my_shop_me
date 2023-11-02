@@ -12,10 +12,21 @@ import ActiveLastBreadcrumb from "../service-ui/breadcrumbs";
 import Header1 from "../header/header1";
 import { useRouter } from "next/router";
 import { useCartStore, useTotalStore } from "@/zustand/product";
+import { useEffect, useState } from "react";
 
 export default function Cart() {
   const router = useRouter();
   const { total, setTotal } = useTotalStore();
+  const { cartItems } = useCartStore();
+  const [isCheckout, setIsCheckout] = useState(false);
+
+  useEffect(() => {
+    if (cartItems.length > 0) {
+      setIsCheckout(false);
+    } else {
+      setIsCheckout(true);
+    }
+  }, [cartItems]);
 
   return (
     <Container maxWidth="xl">
@@ -59,6 +70,7 @@ export default function Cart() {
               fullWidth
               sx={{ mt: 2 }}
               onClick={() => router.push("/checkout")}
+              disabled={isCheckout}
             >
               Checkout
             </Button>

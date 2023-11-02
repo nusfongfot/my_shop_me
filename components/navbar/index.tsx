@@ -80,7 +80,8 @@ function ResponsiveAppBar() {
   const handleLogOut = () => {
     deleteCookie("token");
     deleteCookie("accInfo");
-    window.location.reload();
+    localStorage.removeItem("cart-store")
+    window.location.replace("/");
   };
   React.useEffect(() => {
     const valueTotal = cartItems

@@ -20,7 +20,6 @@ import { errorToast, successToast } from "@/utils/notification";
 import BackDropLoading from "@/components/backDrop";
 import { getCookie, setCookie } from "cookies-next";
 import useAuth from "@/zustand/auth";
-import apiFetch from "@/helpers/interceptors";
 
 type Props = {
   setOpenLogin: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
@@ -71,13 +70,13 @@ export default function LoginComponent({ setOpenLogin }: Props) {
         router.replace("/dashboard?subpath=dashboard");
         setCookie("token", res.token);
         setAuth(res.user);
-        setCookie("accInfo", res.user);
+        setCookie("accInfo", res.user.cus_id);
         successToast(res?.message, 2000);
         setOpenLogin(null);
-      } 
+      }
     } catch (error: any) {
       console.log("err", error);
-      errorToast(error.response.data.message, 2000);
+      errorToast(error.response.data.message, 2500);
     } finally {
       setIsLoading(false);
     }

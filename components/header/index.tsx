@@ -4,18 +4,9 @@ import Header2 from "./header2";
 import { useEffect, useState } from "react";
 import { getCate } from "@/api/products";
 import { useCateStore } from "@/zustand/cate";
+import useAuth from "@/zustand/auth";
 
 export default function Header() {
-  const { cates, setCates } = useCateStore();
-
-  const getCateByAPI = async () => {
-    const res = await getCate();
-    setCates(res);
-  };
-
-  useEffect(() => {
-    getCateByAPI();
-  }, []);
   return (
     <Container maxWidth="xl">
       <Header1 />

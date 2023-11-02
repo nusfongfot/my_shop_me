@@ -12,12 +12,14 @@ import { useRouter } from "next/router";
 import { useCartStore } from "@/zustand/product";
 import { errorToast, successToast } from "@/utils/notification";
 import { useEffect, useState } from "react";
+import useAuth from "@/zustand/auth";
 
 type Props = {
   data: any[];
 };
 
 export default function ProductService({ data }: Props) {
+  const { auth } = useAuth();
   const router = useRouter();
   const { cartItems, addToCartStore } = useCartStore();
 
@@ -28,8 +30,9 @@ export default function ProductService({ data }: Props) {
   };
 
   const handleAddToCart = (item: any) => {
-    const isExist = cartItems.some((product: any) => product.id == item.id);
-
+    const isExist = cartItems.some(
+      (product: any) => product.pro_id == item.pro_id
+    );
     if (isExist) return errorToast("This product is in you cart!", 1500);
     addToCartStore(item);
     successToast("Add product successfully", 1500);
@@ -42,7 +45,7 @@ export default function ProductService({ data }: Props) {
           <Grid item xs={12} md={6} lg={4} xl={3} key={i}>
             <Card sx={{ maxWidth: 345, mb: 3, mt: 3, height: 440 }}>
               <img
-                src={item.thumbnail}
+                src={item.image.split(",")[0]}
                 style={{ width: "100%", height: "230px" }}
               />
 
@@ -74,19 +77,32 @@ export default function ProductService({ data }: Props) {
                     sx={{ fontSize: 15, mb: 1 }}
                     readOnly
                   />
-                  <Stack flexDirection={"row"}>
+
+                  <Stack flexDirection={"row"} justifyContent={"space-between"}>
+                    {auth.cus_id ? (
+                      <Button
+                        startIcon={<ShoppingCartRoundedIcon />}
+                        size="small"
+                        variant="contained"
+                        className="btn_org"
+                        onClick={() => handleAddToCart(item)}
+                      >
+                        Add to cart
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="contained"
+                        size="small"
+                        className="btn_org"
+                      >
+                        Login to buy
+                      </Button>
+                    )}
+
                     <Button
-                      startIcon={<ShoppingCartRoundedIcon />}
                       size="small"
-                      variant="contained"
-                      className="btn_org"
-                      onClick={() => handleAddToCart(item)}
-                    >
-                      Add to cart
-                    </Button>
-                    <Button
-                      size="small"
-                      onClick={() => handleClickLearnMore(item.id)}
+                      variant="outlined"
+                      onClick={() => handleClickLearnMore(item.pro_id)}
                     >
                       Learn More
                     </Button>
